@@ -1,1 +1,2 @@
-echo hola mundo
+#!/bin/bash
+echo hola

@@ -6,4 +6,5 @@ file = open(argv[1], 'rb')
 files = {'script_file': file}
 
 r = requests.post(url, files=files)
+
 print r.text

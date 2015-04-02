@@ -1,2 +1,3 @@
 #!/bin/bash
-sleep 5
+sleep 20
+echo "bananastand"

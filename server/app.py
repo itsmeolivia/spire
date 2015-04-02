@@ -1,7 +1,7 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 import os
 from werkzeug import secure_filename
-from subprocess import call, Popen
+from subprocess import call, Popen, PIPE
 
 app = Flask(__name__)
 app.debug = True
@@ -16,7 +16,7 @@ def start_job():
 
     call(["chmod",  "+x" , file_path])
 
-    p = Popen([file_path])
+    p = Popen([file_path], stdout=PIPE, stderr=PIPE)
 
     jobs[p.pid] = p
     return str(p.pid)
@@ -30,7 +30,11 @@ def status():
 
     state = jobs[int(pid)]
     state.poll()
-    return str(state.returncode) #evan hahn is The Wurst
+    if state.returncode is None:
+        return jsonify({'process_terminated' : False})
+
+    return jsonify({'return_code': state.returncode, 'stderr':state.stderr.read(),
+    'stdout': state.stdout.read(), 'process_terminated':True})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0')
